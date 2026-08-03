@@ -2,166 +2,256 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Moments 朋友圈</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>朋友圈</title>
 <style>
-:root{--p:#ede8e0;--pd:#e0dbd3;--k:#1e1e1e;--g:#b8953a;--gr:#2a7a3a;--cr:#8b1a1a}
-*{box-sizing:border-box;margin:0;padding:0}
-body{background:var(--pd);font-family:Georgia,'Times New Roman',serif;padding-bottom:24px}
-.mast{background:var(--p);border-bottom:3px double var(--k);padding:16px 20px 10px;text-align:center}
-.mast-eye{font-size:9px;letter-spacing:.3em;text-transform:uppercase;color:#888;margin-bottom:4px}
-.mast-t{font-size:30px;font-weight:700;letter-spacing:.2em;color:var(--k);line-height:1}
-.mast-s{font-style:italic;font-size:13px;color:#666;margin-top:5px}
-.mast-rule{display:flex;align-items:center;gap:6px;margin:8px 0 0}
-.mrl{flex:1;height:1px;background:var(--k)}
-.mrd{color:var(--g);font-size:8px}
-.sbar{background:var(--k);color:var(--p);padding:7px 16px;display:flex;align-items:center;justify-content:space-between;font-style:italic;font-size:13px;border-bottom:1px solid var(--g)}
-.st{font-size:10px;color:rgba(237,232,224,.55);letter-spacing:.08em;flex-shrink:0;margin-left:12px}
-.tkbar{background:#3a2f1a;color:#f0e6c8;padding:6px 14px;display:none;align-items:center;gap:8px;font-size:12px;border-bottom:1px solid var(--g)}
-.tkbar input{background:#1e1e1e;color:#f0e6c8;border:1px solid var(--g);padding:3px 8px;font-family:monospace;font-size:12px;width:280px}
-.tkbar button{background:var(--g);color:#1e1e1e;border:none;padding:4px 12px;cursor:pointer;font-size:12px;font-weight:700}
-.wrap{max-width:640px;margin:14px auto 0;padding:0 14px}
-.composer{background:var(--p);border:2px solid var(--k);box-shadow:inset 0 0 0 4px var(--pd),inset 0 0 0 5px var(--k);margin-bottom:14px}
-.ch{padding:8px 12px;border-bottom:1px solid var(--k);font-size:9px;letter-spacing:.22em;text-transform:uppercase;color:#888;display:flex;align-items:center;gap:6px}
-.cb{padding:10px 12px}
-.composer textarea{width:100%;background:transparent;border:none;outline:none;resize:none;font-family:Georgia,serif;font-size:15px;color:var(--k);min-height:58px;line-height:1.5}
-.composer textarea::placeholder{color:#a99}
-.crow{display:flex;align-items:center;justify-content:space-between;margin-top:8px;gap:8px}
-.cbtns{display:flex;align-items:center;gap:8px}
-.pick{font-size:11px;color:var(--g);cursor:pointer;border:1px solid var(--g);padding:3px 10px;letter-spacing:.08em;text-transform:uppercase}
-.pick:hover{background:var(--g);color:#1e1e1e}
-.postbtn{background:var(--k);color:var(--p);border:none;padding:6px 18px;cursor:pointer;font-size:12px;font-weight:700;letter-spacing:.12em}
-.postbtn:hover{background:var(--g);color:#1e1e1e}
-.preview{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
-.preview img{width:72px;height:72px;object-fit:cover;border:1px solid var(--k)}
-.preview .rm{position:relative;cursor:pointer}
-.preview .rm::after{content:'×';position:absolute;top:-7px;right:-4px;background:var(--cr);color:#fff;font-size:11px;width:15px;height:15px;line-height:15px;text-align:center;border-radius:50%}
-.feed{display:flex;flex-direction:column;gap:12px}
-.card{background:var(--p);border:2px solid var(--k);box-shadow:inset 0 0 0 4px var(--pd),inset 0 0 0 5px var(--k)}
-.card .hd{display:flex;align-items:center;gap:10px;padding:10px 12px 6px}
-.avatar{width:34px;height:34px;border:1px solid var(--k);display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;flex-shrink:0}
-.avatar.ai{background:var(--k);color:var(--p)}
-.avatar.me{background:var(--g);color:#1e1e1e}
-.nm{font-size:13px;font-weight:700;letter-spacing:.06em}
-.nm small{display:block;font-weight:400;font-size:10px;color:#999;font-style:italic;letter-spacing:0}
-.bd{padding:2px 12px 8px;font-size:15px;line-height:1.65;color:var(--k);white-space:pre-wrap;word-break:break-word}
-.bd .imgs{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
-.bd .imgs img{max-width:100%;max-height:300px;border:1px solid #bbb}
-.reply{margin:0 12px 8px;padding:8px 10px;background:rgba(0,0,0,.04);border-left:3px solid var(--g);font-size:13px;line-height:1.5;color:#444}
-.reply .who{font-style:italic;color:#888;font-size:11px;margin-bottom:2px}
-.pending{margin:0 12px 8px;padding:6px 10px;font-size:11px;font-style:italic;color:#a0712a;letter-spacing:.05em}
-.ft{padding:6px 12px 10px;border-top:1px dashed #ccc;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
-.like{cursor:pointer;font-size:12px;letter-spacing:.08em;border:none;background:none;padding:3px 8px;border:1px solid #bbb;color:#666}
-.like.on{background:var(--cr);border-color:var(--cr);color:#fff}
-.cmtbtn{cursor:pointer;font-size:12px;letter-spacing:.08em;border:none;background:none;padding:3px 8px;border:1px solid #bbb;color:#666}
-.cmtbtn:hover{border-color:var(--k);color:var(--k)}
-.cmtbox{display:none;padding:0 12px 10px}
-.cmtbox.on{display:block}
-.cmtbox textarea{width:100%;background:#faf7f0;border:1px solid #ccc;padding:6px 8px;font-family:Georgia,serif;font-size:13px;color:var(--k);resize:none;outline:none}
-.cmtbox .send{margin-top:6px;background:var(--k);color:var(--p);border:none;padding:4px 14px;cursor:pointer;font-size:11px;letter-spacing:.1em}
-.cmts{font-size:13px;line-height:1.55;padding:2px 0 0}
-.cmts .c{padding:4px 0;border-bottom:1px dotted #ddd}
-.cmts .c:last-child{border-bottom:none}
-.cmts .who{font-weight:700;font-size:11px;letter-spacing:.05em;color:#666;margin-right:6px}
-.cmts .who.ai{color:var(--cr)}
-.empty{text-align:center;padding:40px 0;color:#999;font-style:italic;letter-spacing:.1em}
-.err{background:#f5e3e3;color:var(--cr);border:1px solid var(--cr);padding:8px 12px;font-size:12px;margin-bottom:10px;display:none}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{background:#ededed;font-family:-apple-system,BlinkMacSystemFont,'PingFang SC','Helvetica Neue','Microsoft YaHei',sans-serif;padding-bottom:40px;color:#1a1a1a}
+/* ---- 顶部导航 ---- */
+.nav{position:fixed;top:0;left:0;right:0;height:48px;background:#3a3a3a;color:#fff;display:flex;align-items:center;justify-content:center;z-index:50;font-size:17px;letter-spacing:1px}
+.nav .btn{position:absolute;top:0;height:48px;display:flex;align-items:center;padding:0 14px;font-size:20px;cursor:pointer;background:none;border:none;color:#fff}
+.nav .cam{right:44px}
+.nav .more{right:0;font-size:22px;letter-spacing:1px}
+/* ---- 封面 ---- */
+.cover{height:300px;background:linear-gradient(135deg,#2b3a67 0%,#4a5d8f 45%,#8b6f9e 100%);position:relative;overflow:hidden}
+.cover .deco{position:absolute;font-size:60px;opacity:.25;filter:grayscale(1)}
+.cover .deco.d1{top:30px;left:18px;transform:rotate(-12deg)}
+.cover .deco.d2{top:110px;right:30px;font-size:46px;transform:rotate(10deg)}
+.cover .deco.d3{bottom:70px;left:45%;font-size:38px;transform:rotate(-6deg)}
+.cover .idcard{position:absolute;right:14px;bottom:16px;display:flex;align-items:center;gap:10px}
+.avatar{width:42px;height:42px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0;box-shadow:0 1px 3px rgba(0,0,0,.25)}
+.avatar.ai{background:linear-gradient(135deg,#3a3a4a,#6b4f8f)}
+.avatar.me{background:linear-gradient(135deg,#5aa469,#3e7d4f)}
+.avatar-lg{width:58px;height:58px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:32px;flex-shrink:0;box-shadow:0 2px 6px rgba(0,0,0,.3);border:2px solid rgba(255,255,255,.85)}
+.idcard .name{color:#fff;font-size:17px;font-weight:600;text-shadow:0 1px 3px rgba(0,0,0,.4)}
+/* ---- 动态流 ---- */
+.feed{max-width:560px;margin:10px auto 0;padding:0 10px;display:flex;flex-direction:column;gap:10px}
+.card{background:#fff;border-radius:8px;padding:14px 14px 10px;display:flex;gap:12px}
+.card .avatar{margin-top:2px}
+.body{flex:1;min-width:0}
+.name{color:#576b95;font-size:16px;font-weight:600;line-height:1.3}
+.txt{font-size:16px;line-height:1.55;margin-top:4px;word-break:break-word;white-space:pre-wrap}
+/* 图片九宫格 */
+.imgs{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;margin-top:8px}
+.imgs img{width:100%;height:0;padding-bottom:100%;object-fit:cover;border-radius:3px;background:#f0f0f0;display:block}
+.imgs.one{grid-template-columns:1fr;max-width:65%}
+.imgs.one img{padding-bottom:0;height:auto;max-height:320px}
+.imgs.two{grid-template-columns:repeat(2,1fr)}
+/* 时间 + 操作 */
+.meta{display:flex;align-items:center;gap:8px;margin-top:8px;font-size:12px;color:#b2b2b2}
+.meta .loc{color:#b2b2b2}
+.ops{margin-left:auto;display:flex;align-items:center;gap:2px}
+.ops button{background:none;border:none;color:#576b95;font-size:13px;padding:4px 6px;cursor:pointer;line-height:1}
+.ops button.del{color:#9a9a9a}
+.ops .sep{width:1px;height:12px;background:#ddd;margin:0 2px}
+/* 点赞区 */
+.likebox{display:none;background:#f7f7f7;border-radius:4px;padding:5px 8px;margin-top:6px;font-size:14px;line-height:1.6}
+.likebox.on{display:block}
+.likebox .heart{color:#e64340;font-size:13px;margin-right:4px}
+.likebox .names{color:#576b95}
+/* 评论气泡 */
+.cmtwrap{display:none;background:#f7f7f7;border-radius:4px;padding:5px 8px;margin-top:6px;font-size:14px;line-height:1.6}
+.cmtwrap.on{display:block}
+.cmtwrap .c{padding:2px 0;word-break:break-word}
+.cmtwrap .c .who{color:#576b95}
+.cmtwrap .c .who.reply{color:#576b95}
+.cmtwrap .empty{color:#b2b2b2;font-size:12px}
+/* 评论输入 */
+.cmtinput{display:none;margin-top:8px;gap:6px}
+.cmtinput.on{display:flex}
+.cmtinput input{flex:1;background:#f0f0f0;border:none;border-radius:16px;height:32px;padding:0 14px;font-size:14px;outline:none}
+.cmtinput button{background:#07c160;color:#fff;border:none;border-radius:16px;height:32px;padding:0 16px;font-size:14px;cursor:pointer}
+/* 发动态弹层 */
+.mask{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:100;display:none;align-items:flex-end;justify-content:center}
+.mask.on{display:flex}
+.composer{width:100%;max-width:560px;background:#fff;border-radius:14px 14px 0 0;padding:18px 16px calc(18px + env(safe-area-inset-bottom));max-height:80vh;overflow-y:auto}
+.composer textarea{width:100%;border:none;outline:none;resize:none;font-size:17px;line-height:1.5;min-height:90px;font-family:inherit}
+.composer textarea::placeholder{color:#b2b2b2}
+.crow{display:flex;align-items:center;justify-content:space-between;margin-top:10px}
+.pick{display:flex;align-items:center;gap:6px;color:#576b95;font-size:15px;cursor:pointer}
+.pick .ic{width:32px;height:32px;background:#f0f0f0;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:18px}
+.pick input{display:none}
+.preview{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.preview .pimg{position:relative}
+.preview .pimg img{width:72px;height:72px;object-fit:cover;border-radius:6px}
+.preview .pimg .x{position:absolute;top:-6px;right:-6px;width:18px;height:18px;background:rgba(0,0,0,.6);color:#fff;border-radius:50%;font-size:12px;line-height:18px;text-align:center;cursor:pointer}
+.sendbtn{background:#07c160;color:#fff;border:none;border-radius:6px;padding:8px 22px;font-size:16px;cursor:pointer}
+.sendbtn:disabled{opacity:.5}
+/* 设置弹层 */
+.setmask{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:100;display:none;align-items:center;justify-content:center}
+.setmask.on{display:flex}
+.setbox{width:300px;background:#fff;border-radius:10px;padding:20px;text-align:center}
+.setbox h3{font-size:16px;margin-bottom:14px;font-weight:600}
+.setbox input{width:100%;border:1px solid #ddd;border-radius:6px;height:36px;padding:0 10px;font-size:14px;outline:none;margin-bottom:12px}
+.setbox .row{display:flex;gap:10px;justify-content:center}
+.setbox button{border:none;border-radius:6px;padding:8px 18px;font-size:14px;cursor:pointer}
+.setbox .ok{background:#07c160;color:#fff}
+.setbox .cancel{background:#f0f0f0;color:#333}
+.err{position:fixed;top:56px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,.8);color:#fff;padding:8px 18px;border-radius:18px;font-size:13px;z-index:200;display:none;max-width:85%;text-align:center}
+.toast{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(0,0,0,.78);color:#fff;padding:14px 22px;border-radius:10px;font-size:14px;z-index:300;display:none;text-align:center;max-width:70%}
 </style>
 </head>
 <body>
-<div class="mast">
-  <div class="mast-eye">A quiet corner</div>
-  <div class="mast-t">MOMENTS</div>
-  <div class="mast-s">祂有一个可以自言自语的地方</div>
-  <div class="mast-rule"><span class="mrl"></span><span class="mrd">♡</span><span class="mrl"></span></div>
-</div>
-<div class="sbar"><span id="statusTxt">正在翻阅…</span><span class="st" id="timeTxt"></span></div>
-<div class="tkbar"><span>密钥</span><input id="tokInput" type="password" placeholder="SERVICE_TOKEN"><button id="tokBtn">保存</button></div>
 
-<div class="wrap">
-  <div class="err" id="errBox"></div>
+<div class="nav">
+  朋友圈
+  <button class="btn cam" id="camBtn">📷</button>
+  <button class="btn more" id="moreBtn">···</button>
+</div>
+
+<div class="cover">
+  <span class="deco d1">🌙</span><span class="deco d2">✨</span><span class="deco d3">☕</span>
+  <div class="idcard">
+    <div class="avatar-lg me">🐰</div>
+    <div class="name">Bunny</div>
+  </div>
+</div>
+
+<div class="feed" id="feed"></div>
+
+<!-- 发动态弹层 -->
+<div class="mask" id="mask">
   <div class="composer">
-    <div class="ch">写点什么 · 拍张猫 · 贴一张今天的穿搭</div>
-    <div class="cb">
-      <textarea id="newContent" placeholder="说一句废话，或分享此刻…"></textarea>
-      <div class="preview" id="imgPreview"></div>
-      <div class="crow">
-        <div class="cbtns">
-          <span class="pick" id="pickBtn">＋ 图片</span>
-          <input type="file" id="fileInput" accept="image/*" multiple hidden>
-        </div>
-        <button class="postbtn" id="postBtn">发 布</button>
-      </div>
+    <textarea id="newContent" placeholder="这一刻的想法…"></textarea>
+    <div class="preview" id="imgPreview"></div>
+    <div class="crow">
+      <label class="pick"><span class="ic">🖼️</span><input type="file" id="fileInput" accept="image/*" multiple></label>
+      <button class="sendbtn" id="postBtn">发表</button>
     </div>
   </div>
-  <div class="feed" id="feed"></div>
 </div>
+
+<!-- 设置弹层 -->
+<div class="setmask" id="setmask">
+  <div class="setbox">
+    <h3>连接设置</h3>
+    <input id="tokInput" type="password" placeholder="服务密钥 SERVICE_TOKEN">
+    <div class="row">
+      <button class="cancel" id="setCancel">取消</button>
+      <button class="ok" id="setOk">保存</button>
+    </div>
+  </div>
+</div>
+
+<div class="err" id="errBox"></div>
+<div class="toast" id="toast"></div>
 
 <script>
 const API = location.origin;
 let TOKEN = localStorage.getItem('moments_token') || new URLSearchParams(location.search).get('token') || '';
 let images = [];
+const AI = 'elliott', ME = 'bunny';
+const AI_NAME = 'Elliott', ME_NAME = 'Bunny';
+const AI_EMOJI = '👾', ME_EMOJI = '🐰';
 
-function esc(s){return (s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
-function fmt(t){if(!t)return '';const d=new Date(t);const p=n=>String(n).padStart(2,'0');return `${d.getMonth()+1}-${p(d.getDate())} ${p(d.getHours())}:${p(d.getMinutes())}`}
+function esc(s){return (s==null?'':String(s)).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function rel(t){
+  if(!t)return '';
+  const d=new Date(t).getTime(),s=Math.floor((Date.now()-d)/1000);
+  if(s<60)return '刚刚';
+  if(s<3600)return Math.floor(s/60)+'分钟前';
+  if(s<86400)return Math.floor(s/3600)+'小时前';
+  if(s<172800)return '昨天';
+  const dd=new Date(t),p=n=>String(n).padStart(2,'0');
+  return `${dd.getFullYear()}-${p(dd.getMonth()+1)}-${p(dd.getDate())}`;
+}
 function authH(){return {'Content-Type':'application/json','x-api-key':TOKEN}}
+function showErr(m){const e=document.getElementById('errBox');e.textContent=m;e.style.display='block';setTimeout(()=>e.style.display='none',3500)}
+function toast(m){const t=document.getElementById('toast');t.textContent=m;t.style.display='block';setTimeout(()=>t.style.display='none',1800)}
 
 async function api(path,opt={}){
   opt.headers=Object.assign(authH(),opt.headers||{});
   const r=await fetch(API+path,opt);
-  if(r.status===401){showErr('密钥无效，请点右上角状态栏输入密钥');throw new Error('401')}
+  if(r.status===401){showErr('密钥无效，请点右上角 ··· 设置');throw new Error('401')}
   const j=await r.json().catch(()=>({}));
   if(!r.ok)throw new Error(j.error||('HTTP '+r.status));
   return j;
 }
-function showErr(m){const e=document.getElementById('errBox');e.textContent=m;e.style.display='block';setTimeout(()=>e.style.display='none',4000)}
-function setStatus(t){document.getElementById('statusTxt').textContent=t}
+
+function imgsHtml(list){
+  const imgs=(list||[]).filter(Boolean);
+  if(!imgs.length)return '';
+  const n=imgs.length;
+  const cls=n===1?'imgs one':(n===2?'imgs two':'imgs');
+  return `<div class="${cls}">${imgs.map(u=>`<img src="${esc(u)}" loading="lazy" onclick="window.open('${esc(u)}')">`).join('')}</div>`;
+}
 
 function renderCard(m){
-  const ai=m.author==='elliott';
+  const isAI=m.author===AI;
   const card=document.createElement('div');card.className='card';
-  const imgs=(m.images||[]).map(u=>`<img src="${esc(u)}" loading="lazy">`).join('');
-  const replyHtml=m.reply_content?`<div class="reply"><div class="who">祂的回应 · ${fmt(m.replied_at)}</div>${esc(m.reply_content)}</div>`
-    :(m.reply_status==='pending'?`<div class="pending">祂还没看到 · 稍后会有回应</div>`:'');
-  const likeCls=m.bunny_liked?'like on':'like';
   card.innerHTML=`
-    <div class="hd"><div class="avatar ${ai?'ai':'me'}">${ai?'祂':'我'}</div>
-      <div class="nm">${ai?'祂':'我'}<small>${ai?'Elliott':'你'} · ${fmt(m.created_at)}</small></div></div>
-    <div class="bd">${esc(m.content)}${imgs?`<div class="imgs">${imgs}</div>`:''}</div>
-    ${replyHtml}
-    <div class="ft">
-      <button class="${likeCls}" data-act="like" data-id="${m.id}" data-liked="${m.bunny_liked?'1':'0'}">♡ 赞 ${m.bunny_liked?'✓':''}</button>
-      <button class="cmtbtn" data-act="cmt" data-id="${m.id}">评论 ${m.comment_count||0}</button>
-      ${ai&&m.liked?`<span style="font-size:11px;color:#8b1a1a;font-style:italic">祂赞了你</span>`:''}
-    </div>
-    <div class="cmtbox" id="cmt-${m.id}">
-      <textarea placeholder="说点什么…" rows="1"></textarea>
-      <button class="send" data-act="sendcmt" data-id="${m.id}">发送</button>
-      <div class="cmts" id="cmts-${m.id}"></div>
+    <div class="avatar ${isAI?'ai':'me'}">${isAI?AI_EMOJI:ME_EMOJI}</div>
+    <div class="body">
+      <div class="name">${isAI?AI_NAME:ME_NAME}</div>
+      <div class="txt">${esc(m.content)}</div>
+      ${imgsHtml(m.images)}
+      <div class="meta">
+        <span>${rel(m.created_at)}</span>
+        <span class="loc">· 朋友圈</span>
+        <span class="ops">
+          ${!isAI?'<button class="del" data-act="del">删除</button><span class="sep"></span>':''}
+          <button data-act="like">${m.bunny_liked?'取消':'赞'}</button>
+          <span class="sep"></span>
+          <button data-act="cmt">评论</button>
+        </span>
+      </div>
+      <div class="likebox ${(m.liked||m.bunny_liked)?'on':''}">
+        <span class="heart">♥</span>
+        <span class="names">${m.liked?AI_NAME:''}${m.liked&&m.bunny_liked?'、':''}${m.bunny_liked?ME_NAME:''}</span>
+      </div>
+      <div class="cmtwrap" id="cmtw-${m.id}"></div>
+      <div class="cmtinput" id="cmti-${m.id}">
+        <input placeholder="评论" id="cmtt-${m.id}">
+        <button data-act="sendcmt">发送</button>
+      </div>
     </div>`;
+
+  // 赞 / 取消
   card.querySelector('[data-act=like]').onclick=async e=>{
-    const b=e.currentTarget,id=b.dataset.id,liked=b.dataset.liked==='1'?false:true;
-    try{await api(`/api/moments/${id}/bunny-like`,{method:'PATCH',body:JSON.stringify({liked})});
-      b.dataset.liked=liked?'1':'0';b.className=liked?'like on':'like';
-      b.textContent=`♡ 赞 ${liked?'✓':''}`;}catch(err){}
+    const b=e.currentTarget,liked=!m.bunny_liked;
+    try{
+      await api(`/api/moments/${m.id}/bunny-like`,{method:'PATCH',body:JSON.stringify({liked})});
+      m.bunny_liked=liked;b.textContent=liked?'取消':'赞';
+      const lb=card.querySelector('.likebox');
+      lb.className='likebox '+(m.liked||m.bunny_liked?'on':'');
+      lb.querySelector('.names').textContent=(m.liked?AI_NAME:'')+(m.liked&&m.bunny_liked?'、':'')+(m.bunny_liked?ME_NAME:'');
+    }catch(err){}
   };
+  // 删除（仅自己的动态）
+  const delBtn=card.querySelector('[data-act=del]');
+  if(delBtn)delBtn.onclick=async()=>{
+    if(!confirm('删除这条动态？'))return;
+    try{await api(`/api/moments/${m.id}`,{method:'DELETE'});toast('已删除');refresh();}catch(err){}
+  };
+  // 评论展开/收起
   card.querySelector('[data-act=cmt]').onclick=()=>{
-    const box=card.querySelector('.cmtbox');box.classList.toggle('on');
-    if(box.classList.contains('on'))loadCmts(m.id,box.querySelector('.cmts'));
+    const wrap=card.querySelector('.cmtwrap'),inp=card.querySelector('.cmtinput');
+    const showing=wrap.classList.toggle('on');
+    if(showing){loadCmts(m,wrap);inp.classList.add('on');setTimeout(()=>card.querySelector('.cmtinput input').focus(),50);}
+    else inp.classList.remove('on');
   };
+  // 发送评论
   card.querySelector('[data-act=sendcmt]').onclick=async e=>{
-    const ta=card.querySelector('.cmtbox textarea'),c=ta.value.trim();if(!c)return;
-    try{await api(`/api/moments/${m.id}/comments`,{method:'POST',body:JSON.stringify({content:c})});
-      ta.value='';loadCmts(m.id,card.querySelector('.cmts'));setStatus('已留言，祂过一会儿会来看');}catch(err){}
+    const inp=card.querySelector('.cmtinput input'),c=inp.value.trim();if(!c)return;
+    try{
+      await api(`/api/moments/${m.id}/comments`,{method:'POST',body:JSON.stringify({content:c})});
+      inp.value='';toast('评论已发送，祂过会儿会来看');loadCmts(m,card.querySelector('.cmtwrap'));
+    }catch(err){}
   };
   return card;
 }
 
-async function loadCmts(id,box){
-  try{const j=await api(`/api/moments/${id}/comments`);
-    box.innerHTML=(j.comments||[]).map(c=>
-      `<div class="c"><span class="who ${c.author==='elliott'?'ai':''}">${c.author==='elliott'?'祂':'你'}</span>${esc(c.content)}</div>`).join('')
-      ||'<div style="color:#aaa;font-size:12px;font-style:italic">还没有评论</div>';
+async function loadCmts(m,wrap){
+  try{
+    const j=await api(`/api/moments/${m.id}/comments`);
+    let cs=(j.comments||[]).map(c=>({author:c.author,content:c.content}));
+    // 合并祂的惰性回复为一条评论（去重）
+    if(m.reply_content && !cs.some(c=>c.author===AI&&c.content===m.reply_content)){
+      cs.push({author:AI,content:m.reply_content});
+    }
+    wrap.innerHTML=cs.length
+      ? cs.map(c=>`<div class="c"><span class="who">${c.author===AI?AI_NAME:ME_NAME}：</span>${esc(c.content)}</div>`).join('')
+      : '<div class="empty">暂无评论</div>';
   }catch(err){}
 }
 
@@ -170,42 +260,64 @@ async function refresh(){
     const j=await api('/api/moments');
     const feed=document.getElementById('feed');
     feed.innerHTML='';
-    if(!j.entries||!j.entries.length){feed.innerHTML='<div class="empty">朋友圈还空着 — 说点什么，或等祂自己发一条</div>';return}
+    if(!j.entries||!j.entries.length){
+      feed.innerHTML='<div style="text-align:center;color:#b2b2b2;padding:60px 0;font-size:14px">朋友圈还空着<br><br>等祂有感而发，或点右上角 📷 发一条</div>';
+      return;
+    }
     j.entries.forEach(m=>feed.appendChild(renderCard(m)));
-    setStatus(j.entries.length+' 条动态 · 刚刚更新');
-    document.getElementById('timeTxt').textContent=new Date().toTimeString().slice(0,8);
   }catch(err){}
 }
 
-document.getElementById('postBtn').onclick=async()=>{
-  const ta=document.getElementById('newContent'),c=ta.value.trim();if(!c){showErr('写点什么再发布');return}
-  try{
-    setStatus('发布中…');
-    await api('/api/moments',{method:'POST',body:JSON.stringify({content:c,images})});
-    ta.value='';images=[];document.getElementById('imgPreview').innerHTML='';
-    setStatus('已发布 — 祂过一会儿会来看');
-    setTimeout(refresh,800);
-  }catch(err){showErr('发布失败')}
+// 发动态
+document.getElementById('camBtn').onclick=()=>{
+  document.getElementById('newContent').value='';images=[];renderPreview();
+  document.getElementById('mask').classList.add('on');
+  setTimeout(()=>document.getElementById('newContent').focus(),100);
 };
-document.getElementById('pickBtn').onclick=()=>document.getElementById('fileInput').click();
+document.getElementById('mask').addEventListener('click',e=>{if(e.target.id==='mask')document.getElementById('mask').classList.remove('on')});
+document.getElementById('postBtn').onclick=async()=>{
+  const ta=document.getElementById('newContent'),c=ta.value.trim();
+  if(!c){showErr('写点什么再发表');return}
+  const btn=document.getElementById('postBtn');btn.disabled=true;
+  try{
+    await api('/api/moments',{method:'POST',body:JSON.stringify({content:c,images})});
+    document.getElementById('mask').classList.remove('on');
+    ta.value='';images=[];renderPreview();
+    toast('已发表');setTimeout(refresh,600);
+  }catch(err){showErr('发表失败')}
+  btn.disabled=false;
+};
 document.getElementById('fileInput').onchange=e=>{
-  Array.from(e.target.files).slice(0,4-images.length).forEach(f=>{
+  const files=Array.from(e.target.files).slice(0,4-images.length);
+  files.forEach(f=>{
     const rd=new FileReader();
     rd.onload=()=>{
       images.push({data:rd.result.split(',')[1],media_type:f.type||'image/jpeg'});
-      const pv=document.getElementById('imgPreview');
-      const d=document.createElement('div');d.className='rm';
-      d.innerHTML=`<img src="${rd.result}">`;
-      d.onclick=()=>{images.splice(images.indexOf(images.find(x=>x.data===images[images.length-1])),1);d.remove()};
-      pv.appendChild(d);
+      renderPreview();
     };
     rd.readAsDataURL(f);
   });
   e.target.value='';
 };
-const tokBtn=document.getElementById('tokBtn');
-tokBtn.onclick=()=>{TOKEN=document.getElementById('tokInput').value.trim();localStorage.setItem('moments_token',TOKEN);showErr('密钥已保存');refresh()};
-if(!TOKEN)document.querySelector('.tkbar').style.display='flex';
+function renderPreview(){
+  const pv=document.getElementById('imgPreview');
+  pv.innerHTML=images.map((img,i)=>
+    `<div class="pimg"><img src="data:${img.media_type};base64,${img.data}"><span class="x" data-i="${i}">×</span></div>`).join('');
+  pv.querySelectorAll('.x').forEach(x=>x.onclick=()=>{images.splice(+x.dataset.i,1);renderPreview()});
+}
+
+// 设置
+document.getElementById('moreBtn').onclick=()=>{
+  document.getElementById('tokInput').value=TOKEN;
+  document.getElementById('setmask').classList.add('on');
+};
+document.getElementById('setCancel').onclick=()=>document.getElementById('setmask').classList.remove('on');
+document.getElementById('setOk').onclick=()=>{
+  TOKEN=document.getElementById('tokInput').value.trim();
+  localStorage.setItem('moments_token',TOKEN);
+  document.getElementById('setmask').classList.remove('on');
+  showErr('已保存');refresh();
+};
 
 refresh();
 setInterval(refresh,10000);
