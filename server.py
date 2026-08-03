@@ -22,7 +22,7 @@ LLM_BASE_URL = os.environ.get("LLM_BASE_URL", "").rstrip("/")
 LLM_API_KEY = os.environ.get("LLM_API_KEY", "")
 LLM_MODEL = os.environ.get("LLM_MODEL", "")
 MCP_PROTOCOL = "2025-06-18"
-SERVER_INFO = {"name": "moments-mcp", "version": "0.1.0"}
+SERVER_INFO = {"name": "moments-mcp", "version": "0.2.0"}
 
 REST = SUPABASE_URL + "/rest/v1"
 _lock = set()  # 并发防重
@@ -86,6 +86,29 @@ def get_moments(limit=20):
         out.append(row)
     return out
 
+def edit_moment(moment_id, content=None, context_note=None):
+    patch = {}
+    if content is not None:
+        content = str(content).strip()
+        if not content:
+            return {"error": "content required"}
+        patch["content"] = content
+    if context_note is not None:
+        patch["context_note"] = str(context_note).strip()
+    if not patch:
+        return {"error": "nothing to edit"}
+    st, d = supabase("/moments", method="PATCH", body=patch,
+                     params={"id": "eq." + str(moment_id)})
+    return {"moment_id": moment_id, "updated": bool(isinstance(d, list) and d), "status": st}
+
+def delete_moment(moment_id):
+    st1, _ = supabase("/moment_comments", method="DELETE",
+                      params={"moment_id": "eq." + str(moment_id)})
+    st2, d = supabase("/moments", method="DELETE",
+                      params={"id": "eq." + str(moment_id)})
+    return {"moment_id": moment_id, "deleted": bool(isinstance(d, list) and d),
+            "status": st2, "comments_status": st1}
+
 def like_moment(moment_id, liked=True):
     st, d = supabase("/moments", method="PATCH", body={"liked": bool(liked)},
                      params={"id": "eq." + str(moment_id)})
@@ -116,6 +139,10 @@ def tool_call(name, args):
             return post_moment(args.get("content"), args.get("context_note"))
         if name == "get_moments":
             return get_moments(args.get("limit", 20))
+        if name == "edit_moment":
+            return edit_moment(args.get("moment_id"), args.get("content"), args.get("context_note"))
+        if name == "delete_moment":
+            return delete_moment(args.get("moment_id"))
         if name == "like_moment":
             return like_moment(args.get("moment_id"), args.get("liked", True))
         if name == "comment_moment":
@@ -138,6 +165,16 @@ TOOLS = [
     {"name": "get_moments", "description": "查看朋友圈动态列表（含评论数），了解 " + USER_NAME + " 最近发了什么。",
      "input_schema": {"type": "object", "properties": {
          "limit": {"type": "integer", "description": "返回条数，默认 20"}}}},
+    {"name": "edit_moment", "description": "编辑自己（" + AI_NAME + "）已发布的一条朋友圈动态，可修改正文或内部备注（只能改自己发的）。",
+     "input_schema": {"type": "object", "properties": {
+         "moment_id": {"type": "string", "description": "要编辑的动态 id"},
+         "content": {"type": "string", "description": "新的正文内容（可选）"},
+         "context_note": {"type": "string", "description": "新的内部备注（可选）"}},
+         "required": ["moment_id"]}},
+    {"name": "delete_moment", "description": "删除一条自己（" + AI_NAME + "）发布的朋友圈动态，连带删除其下的所有评论。谨慎使用，删除后不可恢复。",
+     "input_schema": {"type": "object", "properties": {
+         "moment_id": {"type": "string", "description": "要删除的动态 id"}},
+         "required": ["moment_id"]}},
     {"name": "like_moment", "description": "给 " + USER_NAME + " 的一条动态点赞。",
      "input_schema": {"type": "object", "properties": {
          "moment_id": {"type": "string", "description": "动态 id"},
@@ -516,6 +553,38 @@ class Handler(BaseHTTPRequestHandler):
             st, d = supabase("/moments", method="PATCH", body={"bunny_liked": liked},
                              params={"id": "eq." + mid})
             self._send(200, {"ok": True, "liked": liked, "status": st})
+            return
+        if path.startswith("/api/moments/"):
+            # 编辑动态（供面板/AI 修改正文）
+            mid = path.split("/")[3]
+            patch = {}
+            if "content" in body:
+                content = str(body.get("content") or "").strip()
+                if not content:
+                    self._send(400, {"error": "内容不能为空"})
+                    return
+                patch["content"] = content
+            if "context_note" in body:
+                patch["context_note"] = str(body.get("context_note") or "").strip()
+            if not patch:
+                self._send(400, {"error": "nothing to edit"})
+                return
+            st, d = supabase("/moments", method="PATCH", body=patch, params={"id": "eq." + mid})
+            self._send(200, {"ok": True, "updated": bool(isinstance(d, list) and d), "status": st})
+            return
+        self._send(404, {"error": "not found"})
+
+    def do_DELETE(self):
+        path = urllib.parse.urlparse(self.path).path
+        if not check_auth(self):
+            self._send(*auth_fail()); return
+        if path.startswith("/api/moments/"):
+            mid = path.split("/")[3]
+            st1, _ = supabase("/moment_comments", method="DELETE",
+                              params={"moment_id": "eq." + mid})
+            st2, d = supabase("/moments", method="DELETE", params={"id": "eq." + mid})
+            self._send(200, {"ok": True, "deleted": bool(isinstance(d, list) and d),
+                             "status": st2, "comments_status": st1})
             return
         self._send(404, {"error": "not found"})
 
