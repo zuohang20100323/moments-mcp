@@ -468,11 +468,6 @@ class Handler(BaseHTTPRequestHandler):
                 self._send(*auth_fail()); return
             self._send(200, openai_tool_defs())
             return
-        if path == "/v1/chat/completions":
-            if not check_auth(self):
-                self._send(*auth_fail()); return
-            self._send(*chat_completions_openai(body))
-            return
         if path == "/api/moments":
             if not check_auth(self):
                 self._send(*auth_fail()); return
@@ -505,6 +500,9 @@ class Handler(BaseHTTPRequestHandler):
                 self._send(202, "")
                 return
             self._send(200, resp)
+            return
+        if path == "/v1/tools":
+            self._send(200, openai_tool_defs())
             return
         if path == "/v1/chat/completions":
             code, out = chat_completions_openai(body)
