@@ -210,6 +210,17 @@ def call_llm(messages, tools=None, temperature=0.9, max_tokens=800):
     msg = data["choices"][0]["message"]
     return msg.get("content"), msg.get("tool_calls")
 
+def openai_tool_defs():
+    """OpenAI 风格工具定义列表，供 /v1/tools 返回（便于客户端拉取工具清单）。"""
+    out = []
+    for t in TOOLS:
+        out.append({"type": "function", "function": {
+            "name": t["name"],
+            "description": t["description"],
+            "parameters": t["input_schema"]}})
+    return {"object": "list", "data": out}
+
+
 def chat_completions_openai(req_body):
     """处理 /v1/chat/completions：透传对话 + function calling 工具。"""
     if not LLM_API_KEY:
@@ -446,7 +457,12 @@ class Handler(BaseHTTPRequestHandler):
             if not check_auth(self):
                 self._send(*auth_fail()); return
             self._send(200, {"object": "list", "data": [
-                {"id": "moments-0.1.0", "object": "model", "created": int(time.time()), "owned_by": "moments"}]})
+                {"id": "moments-0.2.0", "object": "model", "created": int(time.time()), "owned_by": "moments"}]})
+            return
+        if path in ("/v1/tools", "/tools"):
+            if not check_auth(self):
+                self._send(*auth_fail()); return
+            self._send(200, openai_tool_defs())
             return
         if path == "/api/moments":
             if not check_auth(self):
