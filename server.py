@@ -224,7 +224,9 @@ def openai_tool_defs():
 def chat_completions_openai(req_body):
     """处理 /v1/chat/completions：透传对话 + function calling 工具。"""
     if not LLM_API_KEY:
-        return 501, {"error": "LLM upstream not configured"}
+        return 501, {"error": "LLM upstream not configured",
+                     "hint": "moments 已就绪 %d 个工具：%s；要启用对话内自动调用，请配置 LLM_API_KEY/LLM_BASE_URL/LLM_MODEL"
+                     % (len(TOOLS), ", ".join(t["name"] for t in TOOLS))}
     messages = req_body.get("messages") or []
     if not messages:
         return 400, {"error": "messages required"}
@@ -457,12 +459,19 @@ class Handler(BaseHTTPRequestHandler):
             if not check_auth(self):
                 self._send(*auth_fail()); return
             self._send(200, {"object": "list", "data": [
-                {"id": "moments-0.2.0", "object": "model", "created": int(time.time()), "owned_by": "moments"}]})
+                {"id": "moments-0.2.0", "object": "model", "created": int(time.time()),
+                 "owned_by": "moments", "tools": [t["name"] for t in TOOLS],
+                 "description": "Moments MCP service with %d tools: %s" % (len(TOOLS), ", ".join(t["name"] for t in TOOLS))}]})
             return
         if path in ("/v1/tools", "/tools"):
             if not check_auth(self):
                 self._send(*auth_fail()); return
             self._send(200, openai_tool_defs())
+            return
+        if path == "/v1/chat/completions":
+            if not check_auth(self):
+                self._send(*auth_fail()); return
+            self._send(*chat_completions_openai(body))
             return
         if path == "/api/moments":
             if not check_auth(self):
